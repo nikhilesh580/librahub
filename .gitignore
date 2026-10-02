@@ -5,6 +5,10 @@ node_modules/
 dist/
 build/
 .next/
+client/dist/
+server/dist/
+client/vite.config.js
+client/vite.config.d.ts
 
 # Environment variables (NEVER commit these)
 .env
