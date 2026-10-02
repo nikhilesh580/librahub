@@ -170,7 +170,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </aside>
 
       {/* Main content */}
-      <main className={cn("flex-1 transition-all duration-300", collapsed ? "lg:ml-[70px]" : "lg:ml-64")}>
+      <main className={cn("flex-1 transition-all duration-300 flex flex-col min-h-screen", collapsed ? "lg:ml-[70px]" : "lg:ml-64")}>
         {/* Top bar */}
         <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background/80 backdrop-blur-xl px-4 lg:px-8">
           <Button
@@ -196,9 +196,34 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </header>
 
         {/* Page content */}
-        <div className="p-4 lg:p-8 max-w-7xl mx-auto animate-fade-in">
+        <div className="flex-1 p-4 lg:p-8 max-w-7xl mx-auto w-full animate-fade-in">
           {children}
         </div>
+
+        {/* Footer */}
+        <footer className="mt-auto border-t border-border/40 py-5 px-4 lg:px-8 bg-card/30 backdrop-blur-sm">
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground text-center sm:text-left">
+            <div>
+              <span className="font-semibold text-foreground">LibraHub</span>
+              <span className="mx-1.5">—</span>
+              <span>Library Management System</span>
+            </div>
+            <div className="flex items-center justify-center gap-3">
+              <span>
+                Developed by <span className="font-medium text-foreground">Nikhilesh Tripathi</span>
+              </span>
+              <span>•</span>
+              <a
+                href="https://github.com/nikhilesh580/librahub"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline font-medium transition-colors"
+              >
+                GitHub
+              </a>
+            </div>
+          </div>
+        </footer>
       </main>
     </div>
   );

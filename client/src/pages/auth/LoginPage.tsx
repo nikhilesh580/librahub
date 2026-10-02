@@ -156,6 +156,25 @@ export default function LoginPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Developer Attribution */}
+        <div className="mt-6 text-center text-xs text-muted-foreground space-y-1">
+          <p>
+            <span className="font-semibold text-foreground">LibraHub</span> — Library Management System
+          </p>
+          <p>
+            Developed by <span className="font-medium text-foreground">Nikhilesh Tripathi</span>
+            <span className="mx-2">•</span>
+            <a
+              href="https://github.com/nikhilesh580/librahub"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline font-medium transition-colors"
+            >
+              GitHub
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );
