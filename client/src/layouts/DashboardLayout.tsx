@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import {
   LayoutDashboard, BookOpen, Users, ArrowLeftRight, CalendarClock,
   DollarSign, BarChart3, Bell, Settings, LogOut, Menu, X,
   BookCopy, UserCog, ScrollText, Library, ChevronLeft, FileText,
-  UserCircle, BookMarked, CreditCard
+  UserCircle, BookMarked, CreditCard, ExternalLink
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -146,7 +146,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* User info & Logout */}
         <div className={cn("p-3 border-t border-white/10", collapsed && "flex flex-col items-center")}>
           {!collapsed && (
-            <div className="flex items-center gap-3 px-3 py-2 mb-2">
+            <Link
+              to="/profile"
+              onClick={() => setSidebarOpen(false)}
+              className="flex items-center gap-3 px-3 py-2 mb-2 rounded-lg hover:bg-white/10 transition-colors"
+              title="View Profile"
+            >
               <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-sm font-bold flex-shrink-0">
                 {user?.name?.charAt(0).toUpperCase()}
               </div>
@@ -154,7 +159,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <p className="text-sm font-medium truncate">{user?.name}</p>
                 <p className="text-xs text-white/50 truncate">{user?.role}</p>
               </div>
-            </div>
+            </Link>
           )}
           <button
             onClick={handleLogout}
@@ -186,12 +191,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <Button variant="ghost" size="icon" className="relative" onClick={() => navigate(user?.role === 'MEMBER' ? '/notifications' : '#')}>
               <Bell className="w-5 h-5" />
             </Button>
-            <div className="hidden sm:flex items-center gap-2 pl-2 border-l">
+            <Link
+              to="/profile"
+              className="hidden sm:flex items-center gap-2 pl-2 border-l hover:opacity-80 transition-opacity"
+              title="View Profile"
+            >
               <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white text-sm font-bold">
                 {user?.name?.charAt(0).toUpperCase()}
               </div>
               <span className="text-sm font-medium">{user?.name}</span>
-            </div>
+            </Link>
           </div>
         </header>
 
@@ -201,25 +210,34 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
 
         {/* Footer */}
-        <footer className="mt-auto border-t border-border/40 py-5 px-4 lg:px-8 bg-card/30 backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground text-center sm:text-left">
-            <div>
-              <span className="font-semibold text-foreground">LibraHub</span>
-              <span className="mx-1.5">—</span>
-              <span>Library Management System</span>
+        <footer className="mt-auto border-t border-border/40 py-4 px-4 lg:px-8 bg-card/30 backdrop-blur-sm">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-muted-foreground text-center md:text-left">
+            <div className="space-y-0.5">
+              <div className="flex items-center justify-center md:justify-start gap-1.5 flex-wrap">
+                <span className="font-semibold text-foreground">LibraHub</span>
+                <span className="text-muted-foreground/50">—</span>
+                <span>Library Management System</span>
+              </div>
+              <p className="text-[11px] text-muted-foreground/80">
+                © 2026 Nikhilesh Tripathi
+              </p>
             </div>
-            <div className="flex items-center justify-center gap-3">
-              <span>
-                Developed by <span className="font-medium text-foreground">Nikhilesh Tripathi</span>
-              </span>
-              <span>•</span>
+            <div className="flex flex-col sm:flex-row items-center justify-center md:justify-end gap-2 sm:gap-3 text-xs">
+              <div className="flex items-center gap-1.5 flex-wrap justify-center">
+                <span>Developed by</span>
+                <span className="font-medium text-foreground">Nikhilesh Tripathi</span>
+                <span className="text-muted-foreground/40">•</span>
+                <span className="text-muted-foreground">BTech CSE (AI & DS)</span>
+              </div>
+              <span className="hidden sm:inline text-muted-foreground/40">•</span>
               <a
                 href="https://github.com/nikhilesh580/librahub"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary hover:underline font-medium transition-colors"
+                className="text-primary hover:underline font-medium inline-flex items-center gap-1 transition-colors"
               >
-                GitHub
+                <span>View on GitHub</span>
+                <ExternalLink className="w-3 h-3" />
               </a>
             </div>
           </div>

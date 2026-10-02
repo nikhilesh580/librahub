@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { UserCircle, Save, Lock, Loader2 } from 'lucide-react';
+import { UserCircle, Save, Lock, Loader2, Code2, ExternalLink } from 'lucide-react';
 import { formatDate } from '@/utils';
 import { Badge } from '@/components/ui/badge';
 import toast from 'react-hot-toast';
@@ -83,6 +83,52 @@ export default function ProfilePage() {
           <Button onClick={() => passwordMutation.mutate({ currentPassword, newPassword })} disabled={passwordMutation.isPending || !currentPassword || !newPassword}>
             {passwordMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}Change Password
           </Button>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Code2 className="w-5 h-5 text-primary" />
+            About Project
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-muted/40 border">
+            <div className="space-y-1">
+              <h2 className="font-semibold text-foreground text-sm">
+                LibraHub — Library Management System
+              </h2>
+              <p className="text-xs text-muted-foreground">
+                Developed by <span className="font-medium text-foreground">Nikhilesh Tripathi</span>
+              </p>
+              <p className="text-xs text-muted-foreground">
+                BTech CSE (AI & DS)
+              </p>
+            </div>
+            <div>
+              <a
+                href="https://github.com/nikhilesh580/librahub"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-background border hover:bg-muted text-foreground transition-colors shadow-sm"
+              >
+                <span>GitHub Repository</span>
+                <ExternalLink className="w-3.5 h-3.5 text-muted-foreground" />
+              </a>
+            </div>
+          </div>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-muted-foreground pt-1">
+            <span>© 2026 Nikhilesh Tripathi</span>
+            <a
+              href="https://github.com/nikhilesh580/librahub"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              https://github.com/nikhilesh580/librahub
+            </a>
+          </div>
         </CardContent>
       </Card>
     </div>

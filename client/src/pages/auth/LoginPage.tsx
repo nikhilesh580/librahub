@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, Mail, Lock, Loader2, Eye, EyeOff } from 'lucide-react';
+import { BookOpen, Mail, Lock, Loader2, Eye, EyeOff, ExternalLink } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function LoginPage() {
@@ -126,52 +126,29 @@ export default function LoginPage() {
                 Create account
               </Link>
             </div>
-
-            {/* Demo credentials */}
-            <div className="mt-6 p-4 rounded-lg bg-muted/50 border">
-              <p className="text-xs font-medium text-muted-foreground mb-2">Demo Credentials:</p>
-              <div className="space-y-1 text-xs text-muted-foreground">
-                <button
-                  type="button"
-                  onClick={() => { setEmail('admin@library.com'); setPassword('Admin@123'); }}
-                  className="block w-full text-left hover:text-primary transition-colors"
-                >
-                  <span className="font-medium">Admin:</span> admin@library.com / Admin@123
-                </button>
-                <button
-                  type="button"
-                  onClick={() => { setEmail('librarian1@library.com'); setPassword('Librarian@123'); }}
-                  className="block w-full text-left hover:text-primary transition-colors"
-                >
-                  <span className="font-medium">Librarian:</span> librarian1@library.com / Librarian@123
-                </button>
-                <button
-                  type="button"
-                  onClick={() => { setEmail('student1@library.com'); setPassword('Student@123'); }}
-                  className="block w-full text-left hover:text-primary transition-colors"
-                >
-                  <span className="font-medium">Student:</span> student1@library.com / Student@123
-                </button>
-              </div>
-            </div>
           </CardContent>
         </Card>
 
         {/* Developer Attribution */}
-        <div className="mt-6 text-center text-xs text-muted-foreground space-y-1">
-          <p>
-            <span className="font-semibold text-foreground">LibraHub</span> — Library Management System
+        <div className="mt-8 text-center text-xs text-muted-foreground space-y-1.5">
+          <p className="font-medium text-foreground/80">
+            <span>LibraHub</span>
+            <span className="mx-1.5 text-muted-foreground/60">—</span>
+            <span>Library Management System</span>
           </p>
-          <p>
-            Developed by <span className="font-medium text-foreground">Nikhilesh Tripathi</span>
-            <span className="mx-2">•</span>
+          <p className="flex items-center justify-center gap-2 flex-wrap text-muted-foreground">
+            <span>
+              Developed by <span className="font-semibold text-foreground">Nikhilesh Tripathi</span>
+            </span>
+            <span className="text-muted-foreground/40">•</span>
             <a
               href="https://github.com/nikhilesh580/librahub"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary hover:underline font-medium transition-colors"
+              className="text-primary hover:underline font-medium inline-flex items-center gap-1 transition-colors"
             >
-              GitHub
+              <span>View on GitHub</span>
+              <ExternalLink className="w-3 h-3" />
             </a>
           </p>
         </div>
