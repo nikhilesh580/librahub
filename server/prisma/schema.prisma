@@ -107,11 +107,12 @@ model User {
   updatedAt DateTime @updatedAt
 
   // Relations
-  transactions  BorrowTransaction[]
-  reservations  Reservation[]
-  fines         Fine[]
-  notifications Notification[]
-  auditLogs     AuditLog[]
+  transactions    BorrowTransaction[]
+  reservations    Reservation[]
+  fines           Fine[]
+  notifications   Notification[]
+  auditLogs       AuditLog[]
+  readingProgress ReadingProgress[]
 
   @@index([email])
   @@index([role])
@@ -138,9 +139,15 @@ model Book {
   categoryId String?
   category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
 
-  authors      BookAuthor[]
-  copies       BookCopy[]
-  reservations Reservation[]
+  // Digital Book
+  isDigital       Boolean @default(false)
+  epubFileName    String?
+  fileSize        Int?
+
+  authors         BookAuthor[]
+  copies          BookCopy[]
+  reservations    Reservation[]
+  readingProgress ReadingProgress[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -346,4 +353,21 @@ model LibrarySettings {
   updatedAt DateTime @updatedAt
 
   @@map("library_settings")
+}
+
+model ReadingProgress {
+  id         String   @id @default(cuid())
+  userId     String
+  bookId     String
+  location   String
+  percentage Float    @default(0.0)
+  updatedAt  DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, bookId])
+  @@index([userId])
+  @@index([bookId])
+  @@map("reading_progress")
 }
