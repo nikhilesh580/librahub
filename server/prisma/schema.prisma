@@ -1,0 +1,349 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============ ENUMS ============
+
+enum UserRole {
+  ADMIN
+  LIBRARIAN
+  MEMBER
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  BLOCKED
+  SUSPENDED
+}
+
+enum BookCopyStatus {
+  AVAILABLE
+  ISSUED
+  RESERVED
+  LOST
+  DAMAGED
+  MAINTENANCE
+}
+
+enum BookCopyCondition {
+  NEW
+  GOOD
+  FAIR
+  POOR
+  DAMAGED
+}
+
+enum TransactionStatus {
+  ISSUED
+  RETURNED
+  OVERDUE
+  LOST
+}
+
+enum ReservationStatus {
+  PENDING
+  READY
+  FULFILLED
+  EXPIRED
+  CANCELLED
+}
+
+enum FineStatus {
+  PENDING
+  PAID
+  WAIVED
+  PARTIALLY_PAID
+}
+
+enum FineReason {
+  OVERDUE
+  LOST_BOOK
+  DAMAGED_BOOK
+  OTHER
+}
+
+enum NotificationType {
+  BOOK_ISSUED
+  BOOK_RETURNED
+  BOOK_DUE_SOON
+  BOOK_OVERDUE
+  RESERVATION_AVAILABLE
+  RESERVATION_EXPIRED
+  FINE_GENERATED
+  FINE_PAID
+  GENERAL
+}
+
+// ============ MODELS ============
+
+model User {
+  id           String     @id @default(cuid())
+  name         String
+  email        String     @unique
+  password     String
+  phone        String?
+  role         UserRole   @default(MEMBER)
+  status       UserStatus @default(ACTIVE)
+  profileImage String?
+  maxBooks     Int        @default(5)
+
+  // Password reset
+  resetToken       String?
+  resetTokenExpiry DateTime?
+
+  // Refresh token
+  refreshToken String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  transactions  BorrowTransaction[]
+  reservations  Reservation[]
+  fines         Fine[]
+  notifications Notification[]
+  auditLogs     AuditLog[]
+
+  @@index([email])
+  @@index([role])
+  @@index([status])
+  @@map("users")
+}
+
+model Book {
+  id             String @id @default(cuid())
+  isbn           String @unique
+  title          String
+  description    String?
+  coverImage     String?
+  publishedYear  Int?
+  language       String @default("English")
+  pages          Int?
+  totalCopies    Int    @default(0)
+  availableCopies Int   @default(0)
+
+  // Relations
+  publisherId String?
+  publisher   Publisher? @relation(fields: [publisherId], references: [id], onDelete: SetNull)
+
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  authors      BookAuthor[]
+  copies       BookCopy[]
+  reservations Reservation[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isbn])
+  @@index([title])
+  @@index([publisherId])
+  @@index([categoryId])
+  @@map("books")
+}
+
+model Author {
+  id        String @id @default(cuid())
+  name      String
+  biography String?
+
+  books BookAuthor[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("authors")
+}
+
+model BookAuthor {
+  bookId   String
+  authorId String
+
+  book   Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  author Author @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@id([bookId, authorId])
+  @@map("book_authors")
+}
+
+model Category {
+  id          String @id @default(cuid())
+  name        String @unique
+  description String?
+
+  books Book[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("categories")
+}
+
+model Publisher {
+  id      String  @id @default(cuid())
+  name    String
+  email   String?
+  phone   String?
+  address String?
+
+  books Book[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("publishers")
+}
+
+model BookCopy {
+  id              String           @id @default(cuid())
+  bookId          String
+  accessionNumber String           @unique
+  status          BookCopyStatus   @default(AVAILABLE)
+  condition       BookCopyCondition @default(NEW)
+  shelfLocation   String?
+
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  transactions BorrowTransaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([bookId])
+  @@index([status])
+  @@index([accessionNumber])
+  @@map("book_copies")
+}
+
+model BorrowTransaction {
+  id           String            @id @default(cuid())
+  userId       String
+  bookCopyId   String
+  issueDate    DateTime          @default(now())
+  dueDate      DateTime
+  returnDate   DateTime?
+  status       TransactionStatus @default(ISSUED)
+  renewalCount Int               @default(0)
+  notes        String?
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bookCopy BookCopy @relation(fields: [bookCopyId], references: [id], onDelete: Cascade)
+  fines    Fine[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([bookCopyId])
+  @@index([status])
+  @@index([dueDate])
+  @@map("borrow_transactions")
+}
+
+model Reservation {
+  id              String            @id @default(cuid())
+  userId          String
+  bookId          String
+  reservationDate DateTime          @default(now())
+  expiryDate      DateTime
+  status          ReservationStatus @default(PENDING)
+  queuePosition   Int               @default(0)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([bookId])
+  @@index([status])
+  @@map("reservations")
+}
+
+model Fine {
+  id            String     @id @default(cuid())
+  transactionId String
+  userId        String
+  amount        Float
+  paidAmount    Float      @default(0)
+  reason        FineReason @default(OVERDUE)
+  status        FineStatus @default(PENDING)
+  paidAt        DateTime?
+  notes         String?
+
+  transaction BorrowTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([transactionId])
+  @@index([status])
+  @@map("fines")
+}
+
+model Notification {
+  id      String           @id @default(cuid())
+  userId  String
+  title   String
+  message String
+  type    NotificationType @default(GENERAL)
+  isRead  Boolean          @default(false)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([isRead])
+  @@map("notifications")
+}
+
+model AuditLog {
+  id       String  @id @default(cuid())
+  userId   String?
+  action   String
+  entity   String
+  entityId String?
+  metadata String?
+  ipAddress String?
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([entity])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+model LibrarySettings {
+  id                    String @id @default("default")
+  libraryName           String @default("Library Management System")
+  maxBooksPerMember     Int    @default(5)
+  maxBorrowDays         Int    @default(14)
+  maxRenewals           Int    @default(2)
+  renewalDays           Int    @default(7)
+  finePerDay            Float  @default(1.0)
+  lostBookFine          Float  @default(50.0)
+  damagedBookFine       Float  @default(25.0)
+  reservationExpiryDays Int    @default(3)
+  maxReservationsPerUser Int   @default(3)
+
+  updatedAt DateTime @updatedAt
+
+  @@map("library_settings")
+}

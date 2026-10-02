@@ -1,0 +1,18 @@
+# LibraHub - Library Management System
+# https://librahub.vercel.app
+
+User-agent: *
+Allow: /
+Allow: /login
+Allow: /register
+
+# Protected/dynamic pages — no need to index
+Disallow: /dashboard
+Disallow: /admin/
+Disallow: /librarian/
+Disallow: /profile
+Disallow: /notifications
+Disallow: /my-books
+Disallow: /fines
+
+Sitemap: https://librahub.vercel.app/sitemap.xml

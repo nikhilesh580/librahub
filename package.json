@@ -1,0 +1,19 @@
+{
+  "name": "library-management-system",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "install:all": "cd server && npm install && cd ../client && npm install",
+    "build:server": "cd server && npm run build",
+    "build:client": "cd client && npm run build",
+    "build:all": "npm run build:server && npm run build:client",
+    "prisma:generate": "cd server && npx prisma generate",
+    "prisma:migrate": "cd server && npx prisma migrate dev",
+    "prisma:deploy": "cd server && npx prisma migrate deploy",
+    "prisma:seed": "cd server && npx prisma db seed",
+    "prisma:studio": "cd server && npx prisma studio"
+  }
+}
+
